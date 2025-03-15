@@ -15,6 +15,17 @@ function ConvertToWebp() {
     setFiles((prevFiles) => [...prevFiles, ...newFiles]);
   }, []);
 
+
+  // Helper function to format file size
+const formatFileSize = (size) => {
+  if (size < 1024) return `${size} B`;
+  if (size < 1024 * 1024) return `${(size / 1024).toFixed(2)} KB`;
+  return `${(size / (1024 * 1024)).toFixed(2)} MB`;
+};
+
+// Function to calculate total size of uploaded images
+const getTotalSize = () => files.reduce((total, file) => total + file.size, 0);
+
   // Convert image to WebP
   const convertImage = useCallback((file) => {
     return new Promise((resolve, reject) => {
@@ -76,7 +87,7 @@ function ConvertToWebp() {
 
       const content = await zip.generateAsync({ type: 'blob' });
       console.log('Downloading ZIP:', content);
-      saveAs(content, 'processed-images.zip');
+      saveAs(content, 'snapimg-converted-images.zip');
     }
 
     // Reset UI
@@ -204,42 +215,41 @@ function ConvertToWebp() {
               className="upload-content"
               onClick={() => document.getElementById('file-input').click()}
             >
-              <img src="img/upload.svg" alt="Upload" className="upload-icon" />
+              <img src="/img/upload.svg" alt="Upload" className="upload-icon" />
               <h3>Drag & Drop Images</h3>
               <p>or click to browse files</p>
               <p className="support-text">Supports: PNG, WEBP, GIF, JPEG</p> {/* Update supported formats */}
             </div>
           </div>
 
-          {/* File Previews */}
           {files.length > 0 && (
-          <div className="image-preview-main">
-            <div className='image-preview-sub'>
-              <h3>
-                Uploaded Images
-              </h3>
-              <div className="file-counter">
-                {files.length} files uploaded
+            <div className="image-preview-main">
+              <div className='image-preview-sub'>
+                <h3>Uploaded Images</h3>
+                <div className="file-counter">
+                  {files.length} files uploaded | {formatFileSize(getTotalSize())}
+                </div>
+              </div>
+              <div className='image-preview-grid'>
+                {files.map((file, index) => (
+                  <div key={index} className="preview-item">
+                    <span className='filesize-img'>{formatFileSize(file.size)}</span>
+
+                    <img
+                      src={URL.createObjectURL(file)}
+                      alt={file.name}
+                      className="preview-image"
+                    />
+                    <button
+                      className="delete-btn"
+                      onClick={() => deleteFile(index)}
+                    >
+                      <img src="/img/delete.svg" alt="Delete" />
+                    </button>
+                  </div>
+                ))}
               </div>
             </div>
-            <div className='image-preview-grid'>
-              {files.map((file, index) => (
-                <div key={index} className="preview-item">
-                  <img
-                    src={URL.createObjectURL(file)}
-                    alt={file.name}
-                    className="preview-image"
-                  />
-                  <button
-                    className="delete-btn"
-                    onClick={() => deleteFile(index)}
-                  >
-                    <img src="img/delete.svg" alt="Delete" />
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
           )}
         </div>
         <div className='right-options-container'>

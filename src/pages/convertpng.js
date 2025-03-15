@@ -11,11 +11,21 @@ function ConvertToPng() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isProcessed, setIsProcessed] = useState(false);
 
+
   // Handle file input change
   const handleFileInputChange = useCallback((e) => {
     const newFiles = Array.from(e.target.files);
     setFiles((prevFiles) => [...prevFiles, ...newFiles]);
   }, []);
+
+  const formatFileSize = (size) => {
+    if (size < 1024) return `${size} B`;
+    if (size < 1024 * 1024) return `${(size / 1024).toFixed(2)} KB`;
+    return `${(size / (1024 * 1024)).toFixed(2)} MB`;
+  };
+
+
+  const getTotalSize = () => files.reduce((total, file) => total + file.size, 0);
 
 
 
@@ -83,7 +93,7 @@ function ConvertToPng() {
 
       const content = await zip.generateAsync({ type: 'blob' });
       console.log('Downloading ZIP:', content);
-      saveAs(content, 'processed-images.zip');
+      saveAs(content, 'snapimg-converted-images.zip');
     }
 
     // Reset UI
@@ -153,28 +163,28 @@ function ConvertToPng() {
   }, [files]);
   useEffect(() => {
     const dropZone = document.getElementById('drop-zone');
-  
+
     const handleDragOver = (e) => {
       e.preventDefault();
       dropZone.classList.add('drag-over');
     };
-  
+
     const handleDragLeave = () => {
       dropZone.classList.remove('drag-over');
     };
-  
+
     const handleDrop = (e) => {
       e.preventDefault();
       dropZone.classList.remove('drag-over');
-  
+
       const droppedFiles = Array.from(e.dataTransfer.files);
       setFiles((prevFiles) => [...prevFiles, ...droppedFiles]);
     };
-  
+
     dropZone.addEventListener('dragover', handleDragOver);
     dropZone.addEventListener('dragleave', handleDragLeave);
     dropZone.addEventListener('drop', handleDrop);
-  
+
     return () => {
       dropZone.removeEventListener('dragover', handleDragOver);
       dropZone.removeEventListener('dragleave', handleDragLeave);
@@ -212,7 +222,7 @@ function ConvertToPng() {
               className="upload-content"
               onClick={() => document.getElementById('file-input').click()}
             >
-              <img src="img/upload.svg" alt="Upload" className="upload-icon" />
+              <img src="/img/upload.svg" alt="Upload" className="upload-icon" />
               <h3>Drag & Drop Images</h3>
               <p>or click to browse files</p>
               <p className="support-text">Supports: PNG, WEBP, GIF, JPEG</p> {/* Update supported formats */}
@@ -221,72 +231,72 @@ function ConvertToPng() {
 
           {/* File Previews */}
           {files.length > 0 && (
-          <div className="image-preview-main">
-            <div className='image-preview-sub'>
-              <h3>
-                Uploaded Images
-              </h3>
-              <div className="file-counter">
-                {files.length} files uploaded
+            <div className="image-preview-main">
+              <div className='image-preview-sub'>
+                <h3>Uploaded Images</h3>
+                <div className="file-counter">
+                  {files.length} files uploaded | {formatFileSize(getTotalSize())}
+                </div>
+              </div>
+              <div className='image-preview-grid'>
+                {files.map((file, index) => (
+                  <div key={index} className="preview-item">
+                    <span className='filesize-img'>{formatFileSize(file.size)}</span>
+
+                    <img
+                      src={URL.createObjectURL(file)}
+                      alt={file.name}
+                      className="preview-image"
+                    />
+                    <button
+                      className="delete-btn"
+                      onClick={() => deleteFile(index)}
+                    >
+                      <img src="/img/delete.svg" alt="Delete" />
+                    </button>
+                  </div>
+                ))}
               </div>
             </div>
-            <div className='image-preview-grid'>
-              {files.map((file, index) => (
-                <div key={index} className="preview-item">
-                  <img
-                    src={URL.createObjectURL(file)}
-                    alt={file.name}
-                    className="preview-image"
-                  />
-                  <button
-                    className="delete-btn"
-                    onClick={() => deleteFile(index)}
-                  >
-                    <img src="img/delete.svg" alt="Delete" />
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
           )}
         </div>
 
-          <div className='right-options-container'>
-            <div>
-              <h3 className='right-options-heading'>Progress</h3>
-              <div className="progress-container">
-                <div className="progress-bar">
-                  <div className="progress" style={{ width: `${progress}%` }}></div>
-                </div>
-                <div className="progress-text" id="progress-text">
-                  {progress}% Completed
-                </div>
+        <div className='right-options-container'>
+          <div>
+            <h3 className='right-options-heading'>Progress</h3>
+            <div className="progress-container">
+              <div className="progress-bar">
+                <div className="progress" style={{ width: `${progress}%` }}></div>
+              </div>
+              <div className="progress-text" id="progress-text">
+                {progress}% Completed
               </div>
             </div>
+          </div>
 
-            <div>
-              <h3 className='right-options-heading'>Actions</h3>
-              <div className="action-bar">
-                {!isProcessed ? (
-                  <button className="btn-4" onClick={processImages} disabled={isProcessing || files.length === 0}>
-                    {isProcessing ? 'Processing...' : 'Convert to PNG'}
-                  </button>
-                ) : (
-                  <button className="btn-4" onClick={downloadProcessedFiles}>
-                    Download
-                  </button>
-                )}
-                {isProcessed && (
-                  <button className="btn-2" onClick={resetState}>
-                    Reset
-                  </button>
-                )}
-              </div>
+          <div>
+            <h3 className='right-options-heading'>Actions</h3>
+            <div className="action-bar">
+              {!isProcessed ? (
+                <button className="btn-4" onClick={processImages} disabled={isProcessing || files.length === 0}>
+                  {isProcessing ? 'Processing...' : 'Convert to PNG'}
+                </button>
+              ) : (
+                <button className="btn-4" onClick={downloadProcessedFiles}>
+                  Download
+                </button>
+              )}
+              {isProcessed && (
+                <button className="btn-2" onClick={resetState}>
+                  Reset
+                </button>
+              )}
             </div>
           </div>
         </div>
       </div>
-      );
+    </div>
+  );
 }
 
-      export default ConvertToPng;
+export default ConvertToPng;

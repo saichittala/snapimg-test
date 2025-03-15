@@ -27,3 +27,7 @@ function App() {
 }
 
 export default App;
+
+
+// "homepage": "https://saichittala.github.io/snapimg-test",
+

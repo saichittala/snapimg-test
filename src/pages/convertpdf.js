@@ -17,6 +17,15 @@ function ConvertToPdf() {
     setFiles((prevFiles) => [...prevFiles, ...newFiles]);
   }, []);
 
+  // Helper function to format file size
+const formatFileSize = (size) => {
+  if (size < 1024) return `${size} B`;
+  if (size < 1024 * 1024) return `${(size / 1024).toFixed(2)} KB`;
+  return `${(size / (1024 * 1024)).toFixed(2)} MB`;
+};
+
+// Function to calculate total size of uploaded images
+const getTotalSize = () => files.reduce((total, file) => total + file.size, 0);
   // Convert image to PDF
   const convertImageToPdf = useCallback((file) => {
     return new Promise((resolve, reject) => {
@@ -106,7 +115,7 @@ function ConvertToPdf() {
         }
 
         const content = await zip.generateAsync({ type: 'blob' });
-        saveAs(content, 'processed-pdfs.zip');
+        saveAs(content, 'snapimg-processed-pdfs.zip');
       }
     }
 
@@ -232,27 +241,26 @@ function ConvertToPdf() {
               className="upload-content"
               onClick={() => document.getElementById('file-input').click()}
             >
-              <img src="img/upload.svg" alt="Upload" className="upload-icon" />
+              <img src="/img/upload.svg" alt="Upload" className="upload-icon" />
               <h3>Drag & Drop Images</h3>
               <p>or click to browse files</p>
               <p className="support-text">Supports: PNG, WEBP, GIF, JPEG</p>
             </div>
           </div>
 
-          {/* File Previews */}
           {files.length > 0 && (
             <div className="image-preview-main">
               <div className='image-preview-sub'>
-                <h3>
-                  Uploaded Images
-                </h3>
+                <h3>Uploaded Images</h3>
                 <div className="file-counter">
-                  {files.length} files uploaded
+                  {files.length} files uploaded | {formatFileSize(getTotalSize())}
                 </div>
               </div>
               <div className='image-preview-grid'>
                 {files.map((file, index) => (
                   <div key={index} className="preview-item">
+                    <span className='filesize-img'>{formatFileSize(file.size)}</span>
+
                     <img
                       src={URL.createObjectURL(file)}
                       alt={file.name}
@@ -262,7 +270,7 @@ function ConvertToPdf() {
                       className="delete-btn"
                       onClick={() => deleteFile(index)}
                     >
-                      <img src="img/delete.svg" alt="Delete" />
+                      <img src="/img/delete.svg" alt="Delete" />
                     </button>
                   </div>
                 ))}
