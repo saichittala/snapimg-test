@@ -5,7 +5,6 @@ import OptionsGrid from './components/card-grid';
 function Home() {
   return (
     <div>
-
       <main>
         <section>
           <div>
@@ -14,7 +13,6 @@ function Home() {
               Compress images and convert JPG, PNG, WebP files easily. No downloads, no quality loss!
             </p>
           </div>
-
           <OptionsGrid />
         </section>
         <div className="bg-white">

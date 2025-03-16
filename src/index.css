@@ -35,7 +35,7 @@
 .bg-gradient {
   background: linear-gradient(116deg, #F2F7FD -26.26%, #FAF6FF 27.76%, #F2F7FD 58.58%, #FFF 93.31%, #FAF6FF 153.81%);
   filter: contrast();
-  margin-top: -75px;
+  margin-top: -150px;
 }
 
 .filter-invert {
@@ -56,14 +56,14 @@ body {
 }
 
 .common-padding {
-  padding: 75px 0;
+  padding: 150px 0;
   margin-top: 0 !important;
   margin-bottom: 0 !important;
 
 }
 
 p {
-  font-family: "Plus Jakarta Sans", serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   letter-spacing: -0.03px !important;
 }
 
@@ -270,7 +270,7 @@ section {
   margin-top: 56px;
   margin-left: auto;
   margin-right: auto;
-  margin-bottom: 75px;
+  margin-bottom: 150px;
 }
 
 h1 {
@@ -832,7 +832,7 @@ p {
 footer {
   background: #fff;
   border-top: 1px solid #D2D2D2;
-  padding: 75px 0 24px;
+  padding: 150px 0 24px;
 }
 
 
@@ -904,6 +904,8 @@ footer {
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
+  padding: 0 !important;
+  margin: 0 !important;
 }
 
 .checkbox-container input[type="checkbox"]:checked {
