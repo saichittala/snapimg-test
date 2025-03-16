@@ -709,7 +709,7 @@ p {
 /* Tool Container */
 .tool-container {
   width: var(--width);
-  margin: 40px auto 25%;
+  margin: 40px auto 100px;
 }
 
 .tool-header {
